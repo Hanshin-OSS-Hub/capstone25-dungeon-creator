@@ -1,0 +1,14 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:your_db_name}?serverTimezone=Asia/Seoul&characterEncoding=utf8&useSSL=false
+    username: ${DB_USER:your_db_user}
+    password: ${DB_PASSWORD:your_db_password}
+
+  jpa:
+    hibernate:
+      ddl-auto: none  # 또는 validate (스키마 자동 수정 방지)
