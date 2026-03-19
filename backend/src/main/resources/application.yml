@@ -1,13 +1,15 @@
 spring:
   application:
     name: game-backend
+  jackson:
+    default-property-inclusion: non_null
 
   profiles:
     active: dev
 
   jpa:
     hibernate:
-      ddl-auto: update  # dev??? update, prod??? validate/none?? override ??
+      ddl-auto: update  # dev update, prod validate/none
     properties:
       hibernate:
         format_sql: true
@@ -30,8 +32,8 @@ logging:
       springframework: INFO
 
 jwt:
-  secret: ${JWT_SECRET:replace_this_with_strong_secret_and_store_securely}
-  expiration: 3600000  # 1??
+  secret: ${JWT_SECRET}
+  expiration: 86400000 # 24시간
 
 springdoc:
   api-docs:

@@ -5,9 +5,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:your_db_name}?serverTimezone=Asia/Seoul&characterEncoding=utf8&useSSL=false
-    username: ${DB_USER:your_db_user}
-    password: ${DB_PASSWORD:your_db_password}
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:db_name}?serverTimezone=Asia/Seoul&characterEncoding=utf8&useSSL=false
+    username: ${DB_USER:db_user}
+    password: ${DB_PASSWORD:db_password}
 
   jpa:
     hibernate:

@@ -4,6 +4,7 @@ import com.capstone.game_backend.domain.user.dto.UserLoginRequest;
 import com.capstone.game_backend.domain.user.dto.UserResponse;
 import com.capstone.game_backend.domain.user.dto.UserSignupRequest;
 import com.capstone.game_backend.domain.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,12 +19,12 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public UserResponse signup(@RequestBody UserSignupRequest req){
+    public UserResponse signup(@Valid @RequestBody UserSignupRequest req){
         return userService.signup(req);
     }
 
     @PostMapping("/login")
-    public UserResponse login(@RequestBody UserLoginRequest req){
+    public UserResponse login(@Valid @RequestBody UserLoginRequest req){
         return userService.login(req);
     }
 }

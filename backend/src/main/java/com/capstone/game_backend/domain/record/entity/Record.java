@@ -8,7 +8,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "record")
+@Table(name = "records")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Record extends BaseEntity {
@@ -25,15 +25,15 @@ public class Record extends BaseEntity {
     @Column(columnDefinition = "json")
     private String gameMeta; // JSON 문자열로 저장
 
-    private LocalDateTime playedAt;
+    private int clearTimeSeconds;
 
     //생성자
     @Builder
-    public Record(User user, int score, String gameMeta, LocalDateTime playedAt) {
+    public Record(User user, int score, String gameMeta, int clearTimeSeconds) {
         this.user = user;
         this.score = score;
         this.gameMeta = gameMeta;
-        this.playedAt = playedAt;
+        this.clearTimeSeconds = clearTimeSeconds;
     }
 
 }

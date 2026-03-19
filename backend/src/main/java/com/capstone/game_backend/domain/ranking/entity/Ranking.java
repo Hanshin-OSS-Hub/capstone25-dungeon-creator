@@ -5,10 +5,8 @@ import com.capstone.game_backend.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
-@Table(name = "ranking")
+@Table(name = "rankings")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Ranking extends BaseEntity {
@@ -20,20 +18,17 @@ public class Ranking extends BaseEntity {
     @JoinColumn(name = "user_id", unique = true)
     private User user;
 
-    private double rankScore;
-    private int rankPosition;
+    private int rankScore;
 
     //생성자
     @Builder
-    public Ranking(User user, int rankPosition, double rankScore) {
+    public Ranking(User user, int rankScore) {
         this.user = user;
-        this.rankPosition = rankPosition;
         this.rankScore = rankScore;
     }
 
     //랭킹 업데이트
-    public void updateRank(int rankPosition, double rankScore) {
-        this.rankPosition = rankPosition;
+    public void updateScore(int rankScore) {
         this.rankScore = rankScore;
     }
 }

@@ -3,7 +3,9 @@ package com.capstone.game_backend.domain.record.controller;
 import com.capstone.game_backend.domain.record.dto.RecordCreateRequest;
 import com.capstone.game_backend.domain.record.dto.RecordResponse;
 import com.capstone.game_backend.domain.record.service.RecordService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,8 +18,11 @@ public class RecordController {
     private final RecordService recordService;
 
     @PostMapping
-    public RecordResponse create(@RequestBody RecordCreateRequest req){
-        return recordService.create(req);
+    public RecordResponse create(
+            // JWT 필터를 통과한 유저의 uid
+            @AuthenticationPrincipal String uid,
+            @Valid @RequestBody RecordCreateRequest req){
+        return recordService.create(uid, req);
     }
 
     @GetMapping
