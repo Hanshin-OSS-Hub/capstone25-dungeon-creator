@@ -3,6 +3,7 @@ package com.capstone.game_backend.global.error;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -41,6 +42,16 @@ public class GlobalExceptionHandler {
 
         ErrorResponse response = new ErrorResponse("VALIDATION_FAILED", errorMessage);
 
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response); // 400 상태 코드 반환
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        // JSON 형식이 틀렸거나 파싱에 실패했을 때 던지는 커스텀 에러 응답
+        ErrorResponse response = new ErrorResponse(
+                "INVALID_INPUT_VALUE",
+                "JSON 형식이 잘못되었거나 타입이 일치하지 않습니다. (gameMeta는 문자열이어야 합니다)"
+        );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response); // 400 상태 코드 반환
     }
 }

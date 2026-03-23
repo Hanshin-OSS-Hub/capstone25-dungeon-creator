@@ -33,7 +33,7 @@ logging:
 
 jwt:
   secret: ${JWT_SECRET}
-  expiration: 86400000 # 24시간
+  expiration: 604800000 # 7일. 게임도중에 JWT 만료되는 것 방지. 리프레쉬 토큰 도입안하고 기간늘려버림.
 
 springdoc:
   api-docs:

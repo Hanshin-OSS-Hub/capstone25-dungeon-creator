@@ -1,6 +1,7 @@
 package com.capstone.game_backend.global.config;
 
 import com.capstone.game_backend.global.util.JwtFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,6 +38,15 @@ public class SecurityConfig {
 
         // 세션x jwt 사용
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // 토큰이 없거나 이상할 때 403 대신 401 에러 만들기
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 상태 코드
+                            response.setContentType("application/json; charset=UTF-8");
+                            response.getWriter().write("{\"errorCode\": \"UNAUTHORIZED\", \"message\": \"토큰이 유효하지 않습니다.\"}");
+                        })
+                )
 
                 // API 접근 권한 설정
                 .authorizeHttpRequests(auth -> auth
