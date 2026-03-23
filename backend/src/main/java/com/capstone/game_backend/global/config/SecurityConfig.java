@@ -43,7 +43,7 @@ public class SecurityConfig {
                         // 회원가입, 로그인 누구나 접근 허용
                         .requestMatchers("/user/signup", "/user/login").permitAll()
                         // 랭킹 전체 조회 누구나 볼 수 있게 허용
-                        .requestMatchers("/ranking/all", "/ranking/search").permitAll()
+                        .requestMatchers("/ranking/top100", "/ranking/search").permitAll()
                         // 전적 검색 API 누구나 볼 수 있게 허용 (GET /record)
                         .requestMatchers(HttpMethod.GET, "/record").permitAll()
                         // Swagger UI 및 API 문서 경로 허용
