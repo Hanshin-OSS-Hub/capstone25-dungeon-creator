@@ -18,18 +18,18 @@ public class Ranking extends BaseEntity {
     @JoinColumn(name = "user_id", unique = true)
     private User user;
 
-    private int rankScore;
+    private int bestPlayTime;
 
     //생성자
     @Builder
-    public Ranking(User user, int rankScore) {
+    public Ranking(User user, int bestPlayTime) {
         this.user = user;
-        this.rankScore = rankScore;
+        this.bestPlayTime = bestPlayTime;
     }
 
     //랭킹 업데이트
-    public void updateScore(int rankScore) {
-        this.rankScore = rankScore;
+    public void updateBestPlayTime(int newPlayTime) {
+        this.bestPlayTime = newPlayTime;
     }
 }
 

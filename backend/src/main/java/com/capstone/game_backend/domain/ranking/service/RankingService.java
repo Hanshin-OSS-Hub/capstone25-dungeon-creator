@@ -25,7 +25,7 @@ public class RankingService {
     // 랭킹 TOP 100 조회
     public List<RankingResponse> getTop100Ranking(){
 
-        List<Ranking> rankings = rankingRepository.findTop100ByOrderByRankScoreDescUpdatedAtAsc();
+        List<Ranking> rankings = rankingRepository.findTop100ByOrderByBestPlayTimeAscUpdatedAtAsc();
 
         List<RankingResponse> responseList = new ArrayList<>();
         for (int i = 0; i < rankings.size(); i++) {
@@ -45,7 +45,7 @@ public class RankingService {
         return rankingRepository.findByUserId(user.getId())
                 .map(ranking -> {
                     long higherCount = rankingRepository.calculateMyRank(
-                            ranking.getRankScore(),
+                            ranking.getBestPlayTime(),
                             ranking.getUpdatedAt()
                     );
                     return RankingResponse.of(ranking, (int) higherCount + 1);
@@ -61,7 +61,7 @@ public class RankingService {
         return rankingRepository.findByUserId(user.getId())
                 .map(ranking -> {
                     long higherCount = rankingRepository.calculateMyRank(
-                            ranking.getRankScore(),
+                            ranking.getBestPlayTime(),
                             ranking.getUpdatedAt()
                     );
                     return RankingResponse.of(ranking, (int) higherCount + 1);
@@ -71,21 +71,20 @@ public class RankingService {
 
     // 전적이 저장될 때마다 호출될 "랭킹 갱신" 로직
     @Transactional
-    public void updateScoreIfBest(User user, int newScore) {
+    public void updatePlayTimeIfBest(User user, int newScore) {
 
         rankingRepository.findByUserId(user.getId()).ifPresentOrElse(
-                // 1. 이미 랭킹 기록이 있는 유저 -> 기존 점수보다 높을 때만 갱신
+                // 1. 이미 랭킹 기록이 있는 유저 -> 기존 시간보다 짧을 때만 갱신
                 ranking -> {
-                    if (newScore > ranking.getRankScore()) {
-                        // 기존 점수보다 높을 때만 점수를 갱신
-                        ranking.updateScore(newScore);
+                    if (newScore < ranking.getBestPlayTime()) {
+                        ranking.updateBestPlayTime(newScore);
                     }
                 },
                 // 2. 랭킹 기록이 아예 없는 유저 (첫 클리어) -> 새로 만들기
                 () -> {
                     Ranking newRanking = Ranking.builder()
                             .user(user)
-                            .rankScore(newScore)
+                            .bestPlayTime(newScore)
                             .build();
                     rankingRepository.save(newRanking);
                 }

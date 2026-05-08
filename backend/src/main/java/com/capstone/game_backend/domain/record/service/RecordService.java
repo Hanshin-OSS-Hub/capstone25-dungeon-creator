@@ -9,6 +9,8 @@ import com.capstone.game_backend.domain.user.entity.User;
 import com.capstone.game_backend.domain.user.repository.UserRepository;
 import com.capstone.game_backend.global.error.CustomException;
 import com.capstone.game_backend.global.error.ErrorCode;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,7 @@ public class RecordService {
     private final UserRepository userRepository;
     private final RecordRepository recordRepository;
     private final RankingService rankingService;
+    private final ObjectMapper objectMapper;
 
     //생성
     @Transactional
@@ -35,18 +38,27 @@ public class RecordService {
         // 2. 엔티티 조립, 저장
         Record record = Record.builder()
                 .user(user)
-                .score(req.getScore())
                 .gameMeta(req.getGameMeta())
-                .clearTimeSeconds(req.getClearTimeSeconds())
+                .playTimeSeconds(req.getPlayTimeSeconds())
                 .build();
 
         recordRepository.save(record);
 
-        // 3. 전적 저장이 끝났다면, 랭킹 보드에 최고 점수 갱신 요청
-        rankingService.updateScoreIfBest(user, req.getScore());
-        // Ranking 갱신 실패로 인한 Record 롤백의 가능성 문제 -> 이벤트 기반 비동기처리
+        // 3. 클리어한 유저만 랭킹반영
+        try {
+            JsonNode metaNode = objectMapper.readTree(req.getGameMeta());
+
+            if (metaNode.has("isCleared") && metaNode.get("isCleared").asBoolean()) {
+
+                rankingService.updatePlayTimeIfBest(user, req.getPlayTimeSeconds());
+            }
+        } catch (Exception e) {
+            // 클라이언트가 보낸 JSON이 깨졌거나 형식이 안 맞을 경우 예외 처리
+            throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
+        }
 
         return RecordResponse.from(record);
+
     }
 
     // 전적조회
@@ -54,7 +66,7 @@ public class RecordService {
 
         User user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        return recordRepository.findByUserIdOrderByClearTimeSecondsAsc(user.getId())
+        return recordRepository.findByUserIdOrderByPlayTimeSecondsAsc(user.getId())
                 .stream()
                 .map(RecordResponse::from)
                 .toList();

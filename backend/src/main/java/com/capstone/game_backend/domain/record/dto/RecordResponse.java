@@ -12,18 +12,16 @@ import lombok.Getter;
 public class RecordResponse {
 
     private Long id;
-    private int score;
 
     @JsonRawValue
     private String gameMeta; // json객체로 보내기
-    private int clearTimeSeconds;
+    private int playTimeSeconds;
 
     public static RecordResponse from(Record record) {
         return new RecordResponse(
                 record.getId(),
-                record.getScore(),
                 record.getGameMeta(),
-                record.getClearTimeSeconds()
+                record.getPlayTimeSeconds()
         );
     }
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface RecordRepository extends JpaRepository<Record, Long> {
 
-    List<Record> findByUserIdOrderByClearTimeSecondsAsc(Long userId);
+    List<Record> findByUserIdOrderByPlayTimeSecondsAsc(Long userId);
     // 전적이 많아질 경우 메모리 초과 가능성 -> 페이징
     // 전적이 많아질 경우 정렬 속도 문제 -> 복합 인덱스
 }

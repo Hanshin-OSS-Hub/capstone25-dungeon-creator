@@ -20,20 +20,17 @@ public class Record extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private int score;
-
     @Column(columnDefinition = "json")
     private String gameMeta; // JSON 문자열로 저장
 
-    private int clearTimeSeconds;
+    private int playTimeSeconds;
 
     //생성자
     @Builder
-    public Record(User user, int score, String gameMeta, int clearTimeSeconds) {
+    public Record(User user, String gameMeta, int playTimeSeconds) {
         this.user = user;
-        this.score = score;
         this.gameMeta = gameMeta;
-        this.clearTimeSeconds = clearTimeSeconds;
+        this.playTimeSeconds = playTimeSeconds;
     }
 
 }

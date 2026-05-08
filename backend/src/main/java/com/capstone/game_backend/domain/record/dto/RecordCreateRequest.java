@@ -8,12 +8,9 @@ import lombok.Getter;
 @Getter
 public class RecordCreateRequest {
 
-    @Min(value = 0, message = "점수는 0보다 작을 수 없습니다.")
-    private int score;
-
     @NotBlank(message = "게임 메타 데이터는 필수입니다.")
     private String gameMeta;
 
-    @Positive(message = "클리어 시간은 1초 이상이어야 합니다.")
-    private int clearTimeSeconds;
+    @Min(value = 0, message = "플레이 시간은 0초 이상이어야 합니다.")
+    private int playTimeSeconds;
 }

@@ -14,15 +14,15 @@ public interface RankingRepository extends JpaRepository<Ranking, Long> {
 
     Optional<Ranking> findByUserId(Long userId);
 
-    // 점수 높은 순 정렬, 같으면 업데이트 시간 빠른순 정렬
+    // 클리어타임 빠른순 정렬, 같으면 업데이트 시간 빠른순 정렬
     @EntityGraph(attributePaths = {"user"})
-    List<Ranking> findTop100ByOrderByRankScoreDescUpdatedAtAsc();
+    List<Ranking> findTop100ByOrderByBestPlayTimeAscUpdatedAtAsc();
 
-    // 특정 유저의 등수 계산 (점수가 더 높거나, 점수동일에 업데이트 빠른 사람의 수)
-    @Query("SELECT COUNT(r) FROM Ranking r WHERE r.rankScore > :myScore OR " +
-            "(r.rankScore = :myScore AND r.updatedAt < :myUpdatedAt)")
+    // 특정 유저의 등수 계산
+    @Query("SELECT COUNT(r) FROM Ranking r WHERE r.bestPlayTime < :myPlayTime OR " +
+            "(r.bestPlayTime = :myPlayTime AND r.updatedAt < :myUpdatedAt)")
     long calculateMyRank(
-            @Param("myScore") int myScore,
+            @Param("myPlayTime") int myPlayTime,
             @Param("myUpdatedAt") LocalDateTime myUpdatedAt
     );
 }

@@ -11,13 +11,13 @@ public class RankingResponse {
 
     private String nickname;
     private int rank;
-    private int rankScore;
+    private int bestPlayTime;  //시간
 
     public static RankingResponse of(Ranking ranking, int calculatedRank) {
         return new RankingResponse(
                 ranking.getUser().getNickname(),
                 calculatedRank,
-                ranking.getRankScore()
+                ranking.getBestPlayTime()
         );
     }
 
