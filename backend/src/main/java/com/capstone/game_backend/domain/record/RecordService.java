@@ -1,12 +1,8 @@
-package com.capstone.game_backend.domain.record.service;
+package com.capstone.game_backend.domain.record;
 
-import com.capstone.game_backend.domain.ranking.service.RankingService;
-import com.capstone.game_backend.domain.record.dto.RecordCreateRequest;
-import com.capstone.game_backend.domain.record.dto.RecordResponse;
-import com.capstone.game_backend.domain.record.entity.Record;
-import com.capstone.game_backend.domain.record.repository.RecordRepository;
-import com.capstone.game_backend.domain.user.entity.User;
-import com.capstone.game_backend.domain.user.repository.UserRepository;
+import com.capstone.game_backend.domain.ranking.RankingService;
+import com.capstone.game_backend.domain.user.UserEntity;
+import com.capstone.game_backend.domain.user.UserRepository;
 import com.capstone.game_backend.global.error.CustomException;
 import com.capstone.game_backend.global.error.ErrorCode;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -32,17 +28,17 @@ public class RecordService {
     public RecordResponse create(String uid, RecordCreateRequest req){
 
         // 1. 유저찾기
-        User user = userRepository.findByUid(uid)
+        UserEntity userEntity = userRepository.findByUid(uid)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 2. 엔티티 조립, 저장
-        Record record = Record.builder()
-                .user(user)
+        RecordEntity recordEntity = RecordEntity.builder()
+                .userEntity(userEntity)
                 .gameMeta(req.getGameMeta())
                 .playTimeSeconds(req.getPlayTimeSeconds())
                 .build();
 
-        recordRepository.save(record);
+        recordRepository.save(recordEntity);
 
         // 3. 클리어한 유저만 랭킹반영
         try {
@@ -50,23 +46,23 @@ public class RecordService {
 
             if (metaNode.has("isCleared") && metaNode.get("isCleared").asBoolean()) {
 
-                rankingService.updatePlayTimeIfBest(user, req.getPlayTimeSeconds());
+                rankingService.updatePlayTimeIfBest(userEntity, req.getPlayTimeSeconds());
             }
         } catch (Exception e) {
             // 클라이언트가 보낸 JSON이 깨졌거나 형식이 안 맞을 경우 예외 처리
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
         }
 
-        return RecordResponse.from(record);
+        return RecordResponse.from(recordEntity);
 
     }
 
     // 전적조회
     public List<RecordResponse> getRecords(String nickname){
 
-        User user = userRepository.findByNickname(nickname)
+        UserEntity userEntity = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        return recordRepository.findByUserIdOrderByPlayTimeSecondsAsc(user.getId())
+        return recordRepository.findByUserIdOrderByPlayTimeSecondsAsc(userEntity.getId())
                 .stream()
                 .map(RecordResponse::from)
                 .toList();

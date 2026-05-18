@@ -1,9 +1,9 @@
-package com.capstone.game_backend.domain.user.controller;
+package com.capstone.game_backend.domain.api;
 
-import com.capstone.game_backend.domain.user.dto.UserLoginRequest;
-import com.capstone.game_backend.domain.user.dto.UserResponse;
-import com.capstone.game_backend.domain.user.dto.UserSignupRequest;
-import com.capstone.game_backend.domain.user.service.UserService;
+import com.capstone.game_backend.domain.user.UserLoginRequest;
+import com.capstone.game_backend.domain.user.UserResponse;
+import com.capstone.game_backend.domain.user.UserSignupRequest;
+import com.capstone.game_backend.domain.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

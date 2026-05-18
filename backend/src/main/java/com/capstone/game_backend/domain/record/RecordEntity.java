@@ -1,24 +1,22 @@
-package com.capstone.game_backend.domain.record.entity;
+package com.capstone.game_backend.domain.record;
 
-import com.capstone.game_backend.domain.user.entity.User;
+import com.capstone.game_backend.domain.user.UserEntity;
 import com.capstone.game_backend.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "records")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Record extends BaseEntity {
+public class RecordEntity extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserEntity userEntity;
 
     @Column(columnDefinition = "json")
     private String gameMeta; // JSON 문자열로 저장
@@ -27,8 +25,8 @@ public class Record extends BaseEntity {
 
     //생성자
     @Builder
-    public Record(User user, String gameMeta, int playTimeSeconds) {
-        this.user = user;
+    public RecordEntity(UserEntity userEntity, String gameMeta, int playTimeSeconds) {
+        this.userEntity = userEntity;
         this.gameMeta = gameMeta;
         this.playTimeSeconds = playTimeSeconds;
     }

@@ -1,7 +1,7 @@
-package com.capstone.game_backend.domain.ranking.controller;
+package com.capstone.game_backend.domain.api;
 
-import com.capstone.game_backend.domain.ranking.dto.RankingResponse;
-import com.capstone.game_backend.domain.ranking.service.RankingService;
+import com.capstone.game_backend.domain.ranking.RankingResponse;
+import com.capstone.game_backend.domain.ranking.RankingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;

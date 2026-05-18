@@ -1,4 +1,4 @@
-package com.capstone.game_backend.domain.user.entity;
+package com.capstone.game_backend.domain.user;
 
 import com.capstone.game_backend.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -10,7 +10,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction("is_deleted = false") //
-public class User extends BaseEntity {
+public class UserEntity extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,7 +29,7 @@ public class User extends BaseEntity {
 
     // 생성자
     @Builder
-    public User(String uid, String nickname, String passwordHash) {
+    public UserEntity(String uid, String nickname, String passwordHash) {
         this.uid = uid;
         this.nickname = nickname;
         this.passwordHash = passwordHash;

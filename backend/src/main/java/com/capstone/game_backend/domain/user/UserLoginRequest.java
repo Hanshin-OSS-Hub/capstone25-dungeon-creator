@@ -1,4 +1,4 @@
-package com.capstone.game_backend.domain.user.dto;
+package com.capstone.game_backend.domain.user;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

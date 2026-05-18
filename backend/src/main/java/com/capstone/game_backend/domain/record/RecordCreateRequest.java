@@ -1,8 +1,7 @@
-package com.capstone.game_backend.domain.record.dto;
+package com.capstone.game_backend.domain.record;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 
 @Getter

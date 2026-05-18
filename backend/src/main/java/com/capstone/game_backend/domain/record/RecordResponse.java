@@ -1,6 +1,5 @@
-package com.capstone.game_backend.domain.record.dto;
+package com.capstone.game_backend.domain.record;
 
-import com.capstone.game_backend.domain.record.entity.Record;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,11 +16,11 @@ public class RecordResponse {
     private String gameMeta; // json객체로 보내기
     private int playTimeSeconds;
 
-    public static RecordResponse from(Record record) {
+    public static RecordResponse from(RecordEntity recordEntity) {
         return new RecordResponse(
-                record.getId(),
-                record.getGameMeta(),
-                record.getPlayTimeSeconds()
+                recordEntity.getId(),
+                recordEntity.getGameMeta(),
+                recordEntity.getPlayTimeSeconds()
         );
     }
 }

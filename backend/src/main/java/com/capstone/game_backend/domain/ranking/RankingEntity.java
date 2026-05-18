@@ -1,6 +1,6 @@
-package com.capstone.game_backend.domain.ranking.entity;
+package com.capstone.game_backend.domain.ranking;
 
-import com.capstone.game_backend.domain.user.entity.User;
+import com.capstone.game_backend.domain.user.UserEntity;
 import com.capstone.game_backend.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,21 +9,21 @@ import lombok.*;
 @Table(name = "rankings")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Ranking extends BaseEntity {
+public class RankingEntity extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", unique = true)
-    private User user;
+    private UserEntity userEntity;
 
     private int bestPlayTime;
 
     //생성자
     @Builder
-    public Ranking(User user, int bestPlayTime) {
-        this.user = user;
+    public RankingEntity(UserEntity userEntity, int bestPlayTime) {
+        this.userEntity = userEntity;
         this.bestPlayTime = bestPlayTime;
     }
 
