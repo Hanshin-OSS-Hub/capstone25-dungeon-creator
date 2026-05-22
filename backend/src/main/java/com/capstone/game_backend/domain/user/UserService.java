@@ -29,33 +29,33 @@ public class UserService {
         if(userRepository.existsByNickname(req.nickname()))
             throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
 
-        UserEntity userEntity = UserEntity.builder()
+        UserEntity user = UserEntity.builder()
                 .uid(req.uid())
                 .nickname(req.nickname())
                 .passwordHash(passwordEncoder.encode(req.password()))
                 .build();
 
-        userRepository.save(userEntity);
+        userRepository.save(user);
 
         // 기획 의도에 따른 선택:
         // 회원가입 직후 자동 로그인을 시킬 거라면 여기서도 token을 발급해서 준다
-        return UserResponse.from(userEntity);
+        return UserResponse.from(user);
     }
 
     // 로그인
     public UserResponse login(UserLoginRequest req){
         // 1. 아이디로 유저 찾기 (없으면 바로 로그인 실패 처리)
-        UserEntity userEntity = userRepository.findByUid(req.uid())
+        UserEntity user = userRepository.findByUid(req.uid())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_CREDENTIALS));
 
         // 2. 비밀번호 검증: matches(입력받은 평문, DB에 저장된 해시값)
-        if(!passwordEncoder.matches(req.password(), userEntity.getPasswordHash())) {
+        if(!passwordEncoder.matches(req.password(), user.getPasswordHash())) {
             throw new CustomException(ErrorCode.INVALID_CREDENTIALS); // 비밀번호가 틀려도 똑같은 에러로
         }
 
-        String token = jwtUtil.generateToken(userEntity.getUid());
+        String token = jwtUtil.generateToken(user.getUid());
 
-        return UserResponse.of(userEntity, token);
+        return UserResponse.of(user, token);
     }
 
     // 유저 탈퇴

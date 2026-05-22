@@ -12,11 +12,11 @@ public record RecordResponse(
         int playTimeSeconds
 ) {
 
-    public static RecordResponse from(RecordEntity recordEntity) {
+    public static RecordResponse from(RecordEntity record) {
         return new RecordResponse(
-                recordEntity.getId(),
-                recordEntity.getGameMeta(),
-                recordEntity.getPlayTimeSeconds()
+                record.getId(),
+                record.getGameMeta(),
+                record.getPlayTimeSeconds()
         );
     }
 }

@@ -8,11 +8,11 @@ public record RankingResponse (
         int bestPlayTime  //시간
 ) {
 
-    public static RankingResponse of(RankingEntity rankingEntity, int calculatedRank) {
+    public static RankingResponse of(RankingEntity ranking, int calculatedRank) {
         return new RankingResponse(
-                rankingEntity.getUserEntity().getNickname(),
+                ranking.getUser().getNickname(),
                 calculatedRank,
-                rankingEntity.getBestPlayTime()
+                ranking.getBestPlayTime()
         );
     }
 

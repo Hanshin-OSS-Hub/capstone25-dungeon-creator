@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface RankingRepository extends JpaRepository<RankingEntity, Long> {
 
-    Optional<RankingEntity> findByUserId(Long userId);
+    Optional<RankingEntity> findByUser_Id(Long userId);
 
     // 클리어타임 빠른순 정렬, 같으면 업데이트 시간 빠른순 정렬
     @EntityGraph(attributePaths = {"user"})

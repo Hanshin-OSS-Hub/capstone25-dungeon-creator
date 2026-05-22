@@ -29,38 +29,38 @@ public class RecordService {
     @Transactional
     public RecordResponse create(String uid, RecordCreateRequest req){
 
-        UserEntity userEntity = userRepository.findByUid(uid)
+        UserEntity user = userRepository.findByUid(uid)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        RecordEntity recordEntity = RecordEntity.builder()
-                .userEntity(userEntity)
+        RecordEntity record = RecordEntity.builder()
+                .user(user)
                 .gameMeta(req.gameMeta())
                 .playTimeSeconds(req.playTimeSeconds())
                 .build();
 
-        recordRepository.save(recordEntity);
+        recordRepository.save(record);
 
         // 클리어한 유저만 랭킹반영
         try {
             JsonNode metaNode = objectMapper.readTree(req.gameMeta());
 
             if (metaNode.has("isCleared") && metaNode.get("isCleared").asBoolean()) {
-                rankingService.updatePlayTimeIfBest(userEntity, req.playTimeSeconds());
+                rankingService.updatePlayTimeIfBest(user, req.playTimeSeconds());
             }
         } catch (Exception e) {
             // 클라이언트가 보낸 JSON이 깨졌거나 형식이 안 맞을 경우 예외 처리
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
         }
 
-        return RecordResponse.from(recordEntity);
+        return RecordResponse.from(record);
     }
 
     // 전적조회
     public List<RecordResponse> getRecords(String nickname){
 
-        UserEntity userEntity = userRepository.findByNickname(nickname)
+        UserEntity user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        return recordRepository.findByUserIdOrderByPlayTimeSecondsAsc(userEntity.getId())
+        return recordRepository.findByUser_IdOrderByPlayTimeSecondsAsc(user.getId())
                 .stream()
                 .map(RecordResponse::from)
                 .toList();

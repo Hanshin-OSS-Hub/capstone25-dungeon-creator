@@ -122,7 +122,7 @@ class RecordServiceTest {
         RecordEntity record2 = RecordEntity.builder().gameMeta("{\"isCleared\":false}").playTimeSeconds(150).build();
 
         given(userRepository.findByNickname(nickname)).willReturn(Optional.of(userEntity));
-        given(recordRepository.findByUserIdOrderByPlayTimeSecondsAsc(userEntity.getId()))
+        given(recordRepository.findByUser_IdOrderByPlayTimeSecondsAsc(userEntity.getId()))
                 .willReturn(List.of(record1, record2)); // 2개의 전적이 있다고 설정
 
         // when

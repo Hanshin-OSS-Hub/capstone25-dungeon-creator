@@ -16,15 +16,15 @@ public class RankingEntity extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", unique = true)
-    private UserEntity userEntity;
+    private UserEntity user;
 
     @Column(nullable = false)
     private int bestPlayTime;
 
     //생성자
     @Builder
-    public RankingEntity(UserEntity userEntity, int bestPlayTime) {
-        this.userEntity = userEntity;
+    public RankingEntity(UserEntity user, int bestPlayTime) {
+        this.user = user;
         this.bestPlayTime = bestPlayTime;
     }
 

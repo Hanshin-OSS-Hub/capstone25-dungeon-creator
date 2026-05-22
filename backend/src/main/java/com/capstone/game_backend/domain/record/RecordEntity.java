@@ -16,7 +16,7 @@ public class RecordEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity userEntity;
+    private UserEntity user;
 
     @Column(columnDefinition = "json", nullable = false)
     private String gameMeta; // JSON 문자열로 저장
@@ -26,8 +26,8 @@ public class RecordEntity extends BaseEntity {
 
     //생성자
     @Builder
-    public RecordEntity(UserEntity userEntity, String gameMeta, int playTimeSeconds) {
-        this.userEntity = userEntity;
+    public RecordEntity(UserEntity user, String gameMeta, int playTimeSeconds) {
+        this.user = user;
         this.gameMeta = gameMeta;
         this.playTimeSeconds = playTimeSeconds;
     }

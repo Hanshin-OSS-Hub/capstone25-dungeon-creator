@@ -50,7 +50,7 @@ class RankingServiceTest {
     // 테스트용 RankingEntity 생성 헬퍼 메서드
     private RankingEntity createRanking(Long id, UserEntity user, int bestPlayTime) {
         RankingEntity ranking = RankingEntity.builder()
-                .userEntity(user)
+                .user(user)
                 .bestPlayTime(bestPlayTime)
                 .build();
         ReflectionTestUtils.setField(ranking, "id", id);
@@ -91,7 +91,7 @@ class RankingServiceTest {
         RankingEntity ranking = createRanking(1L, user, 150);
 
         given(userRepository.findByNickname(nickname)).willReturn(Optional.of(user));
-        given(rankingRepository.findByUserId(1L)).willReturn(Optional.of(ranking));
+        given(rankingRepository.findByUser_Id(1L)).willReturn(Optional.of(ranking));
 
         // 내 기록보다 상위 기록이 5개 있다고 가정 -> 내 순위는 6위
         given(rankingRepository.calculateMyRank(eq(150), any(LocalDateTime.class))).willReturn(5L);
@@ -112,7 +112,7 @@ class RankingServiceTest {
         UserEntity user = createUser(1L, "uid1", "UserA");
         RankingEntity existingRanking = createRanking(1L, user, 200);
 
-        given(rankingRepository.findByUserId(1L)).willReturn(Optional.of(existingRanking));
+        given(rankingRepository.findByUser_Id(1L)).willReturn(Optional.of(existingRanking));
 
         // when (신기록 150 달성)
         rankingService.updatePlayTimeIfBest(user, 150);
@@ -127,7 +127,7 @@ class RankingServiceTest {
     void updatePlayTimeIfBest_CreateNew() {
         // given
         UserEntity user = createUser(1L, "uid1", "UserA");
-        given(rankingRepository.findByUserId(1L)).willReturn(Optional.empty());
+        given(rankingRepository.findByUser_Id(1L)).willReturn(Optional.empty());
 
         // when
         rankingService.updatePlayTimeIfBest(user, 300);

@@ -36,42 +36,42 @@ public class RankingService {
     // 유저 랭킹 조회
     public RankingResponse getRankingByNickname(String nickname){
 
-        UserEntity userEntity = userRepository.findByNickname(nickname)
+        UserEntity user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 랭킹 기록이 없는경우 에러말고 순위 외 객체 리턴하기
-        return rankingRepository.findByUserId(userEntity.getId())
-                .map(rankingEntity -> {
+        return rankingRepository.findByUser_Id(user.getId())
+                .map(ranking -> {
                     long higherCount = rankingRepository.calculateMyRank(
-                            rankingEntity.getBestPlayTime(),
-                            rankingEntity.getUpdatedAt()
+                            ranking.getBestPlayTime(),
+                            ranking.getUpdatedAt()
                     );
-                    return RankingResponse.of(rankingEntity, (int) higherCount + 1);
+                    return RankingResponse.of(ranking, (int) higherCount + 1);
                 })
                 .orElseGet(() -> RankingResponse.unranked(nickname));
     }
 
     // 내 랭킹 조회
     public RankingResponse getMyRanking(String uid) {
-        UserEntity userEntity = userRepository.findByUid(uid)
+        UserEntity user = userRepository.findByUid(uid)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        return rankingRepository.findByUserId(userEntity.getId())
-                .map(rankingEntity -> {
+        return rankingRepository.findByUser_Id(user.getId())
+                .map(ranking -> {
                     long higherCount = rankingRepository.calculateMyRank(
-                            rankingEntity.getBestPlayTime(),
-                            rankingEntity.getUpdatedAt()
+                            ranking.getBestPlayTime(),
+                            ranking.getUpdatedAt()
                     );
-                    return RankingResponse.of(rankingEntity, (int) higherCount + 1);
+                    return RankingResponse.of(ranking, (int) higherCount + 1);
                 })
-                .orElseGet(() -> RankingResponse.unranked(userEntity.getNickname()));
+                .orElseGet(() -> RankingResponse.unranked(user.getNickname()));
     }
 
     // 전적이 저장될 때마다 호출될 랭킹 갱신 로직
     @Transactional
-    public void updatePlayTimeIfBest(UserEntity userEntity, int newScore) {
+    public void updatePlayTimeIfBest(UserEntity user, int newScore) {
 
-        rankingRepository.findByUserId(userEntity.getId()).ifPresentOrElse(
+        rankingRepository.findByUser_Id(user.getId()).ifPresentOrElse(
                 // 1. 이미 랭킹 기록이 있는 유저 -> 기존 시간보다 짧을 때만 갱신
                 rankingEntity -> {
                     if (newScore < rankingEntity.getBestPlayTime()) {
@@ -80,11 +80,11 @@ public class RankingService {
                 },
                 // 2. 랭킹 기록이 아예 없는 유저 (첫 클리어) -> 새로 만들기
                 () -> {
-                    RankingEntity newRankingEntity = RankingEntity.builder()
-                            .userEntity(userEntity)
+                    RankingEntity newRanking = RankingEntity.builder()
+                            .user(user)
                             .bestPlayTime(newScore)
                             .build();
-                    rankingRepository.save(newRankingEntity);
+                    rankingRepository.save(newRanking);
                 }
         );
     }
