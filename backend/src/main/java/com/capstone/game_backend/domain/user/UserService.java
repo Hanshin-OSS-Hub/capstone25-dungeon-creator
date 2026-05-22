@@ -1,5 +1,8 @@
 package com.capstone.game_backend.domain.user;
 
+import com.capstone.game_backend.domain.user.dto.UserLoginRequest;
+import com.capstone.game_backend.domain.user.dto.UserResponse;
+import com.capstone.game_backend.domain.user.dto.UserSignupRequest;
 import com.capstone.game_backend.global.error.CustomException;
 import com.capstone.game_backend.global.error.ErrorCode;
 import com.capstone.game_backend.global.util.JwtUtil;
@@ -20,17 +23,16 @@ public class UserService {
     // 회원가입
     @Transactional
     public UserResponse signup(UserSignupRequest req){
-        if(userRepository.existsByUid(req.getUid()))
+        if(userRepository.existsByUid(req.uid()))
             throw new CustomException(ErrorCode.DUPLICATE_UID);
 
-        if(userRepository.existsByNickname(req.getNickname()))
+        if(userRepository.existsByNickname(req.nickname()))
             throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
 
         UserEntity userEntity = UserEntity.builder()
-                .uid(req.getUid())
-                .nickname(req.getNickname())
-                // encode()로 평문 암호화해서 DB에 넣기
-                .passwordHash(passwordEncoder.encode(req.getPassword()))
+                .uid(req.uid())
+                .nickname(req.nickname())
+                .passwordHash(passwordEncoder.encode(req.password()))
                 .build();
 
         userRepository.save(userEntity);
@@ -43,18 +45,16 @@ public class UserService {
     // 로그인
     public UserResponse login(UserLoginRequest req){
         // 1. 아이디로 유저 찾기 (없으면 바로 로그인 실패 처리)
-        UserEntity userEntity = userRepository.findByUid(req.getUid())
+        UserEntity userEntity = userRepository.findByUid(req.uid())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_CREDENTIALS));
 
         // 2. 비밀번호 검증: matches(입력받은 평문, DB에 저장된 해시값)
-        if(!passwordEncoder.matches(req.getPassword(), userEntity.getPasswordHash())) {
+        if(!passwordEncoder.matches(req.password(), userEntity.getPasswordHash())) {
             throw new CustomException(ErrorCode.INVALID_CREDENTIALS); // 비밀번호가 틀려도 똑같은 에러로
         }
 
-        // 1. 비밀번호까지 맞았다면, JwtUtil로 토큰 생성
-                String token = jwtUtil.generateToken(userEntity.getUid());
+        String token = jwtUtil.generateToken(userEntity.getUid());
 
-        // 2. 응답 데이터에 토큰을 담아서 보내기
         return UserResponse.of(userEntity, token);
     }
 

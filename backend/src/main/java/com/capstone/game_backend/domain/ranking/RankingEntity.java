@@ -18,6 +18,7 @@ public class RankingEntity extends BaseEntity {
     @JoinColumn(name = "user_id", unique = true)
     private UserEntity userEntity;
 
+    @Column(nullable = false)
     private int bestPlayTime;
 
     //생성자

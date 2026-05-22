@@ -18,9 +18,10 @@ public class RecordEntity extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity userEntity;
 
-    @Column(columnDefinition = "json")
+    @Column(columnDefinition = "json", nullable = false)
     private String gameMeta; // JSON 문자열로 저장
 
+    @Column(nullable = false)
     private int playTimeSeconds;
 
     //생성자

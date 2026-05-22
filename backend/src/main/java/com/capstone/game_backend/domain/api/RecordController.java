@@ -1,7 +1,7 @@
 package com.capstone.game_backend.domain.api;
 
-import com.capstone.game_backend.domain.record.RecordCreateRequest;
-import com.capstone.game_backend.domain.record.RecordResponse;
+import com.capstone.game_backend.domain.record.dto.RecordCreateRequest;
+import com.capstone.game_backend.domain.record.dto.RecordResponse;
 import com.capstone.game_backend.domain.record.RecordService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,5 +1,6 @@
 package com.capstone.game_backend.domain.ranking;
 
+import com.capstone.game_backend.domain.ranking.dto.RankingResponse;
 import com.capstone.game_backend.domain.user.UserEntity;
 import com.capstone.game_backend.domain.user.UserRepository;
 import com.capstone.game_backend.global.error.CustomException;
@@ -38,7 +39,7 @@ public class RankingService {
         UserEntity userEntity = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        // 랭킹 기록이 없는경우의 랭킹 조회 경우 에러말고 순위 외 객체 리턴하기
+        // 랭킹 기록이 없는경우 에러말고 순위 외 객체 리턴하기
         return rankingRepository.findByUserId(userEntity.getId())
                 .map(rankingEntity -> {
                     long higherCount = rankingRepository.calculateMyRank(
@@ -66,7 +67,7 @@ public class RankingService {
                 .orElseGet(() -> RankingResponse.unranked(userEntity.getNickname()));
     }
 
-    // 전적이 저장될 때마다 호출될 "랭킹 갱신" 로직
+    // 전적이 저장될 때마다 호출될 랭킹 갱신 로직
     @Transactional
     public void updatePlayTimeIfBest(UserEntity userEntity, int newScore) {
 

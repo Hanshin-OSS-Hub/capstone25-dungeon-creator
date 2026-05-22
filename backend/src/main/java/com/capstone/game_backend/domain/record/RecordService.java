@@ -1,6 +1,8 @@
 package com.capstone.game_backend.domain.record;
 
 import com.capstone.game_backend.domain.ranking.RankingService;
+import com.capstone.game_backend.domain.record.dto.RecordCreateRequest;
+import com.capstone.game_backend.domain.record.dto.RecordResponse;
 import com.capstone.game_backend.domain.user.UserEntity;
 import com.capstone.game_backend.domain.user.UserRepository;
 import com.capstone.game_backend.global.error.CustomException;
@@ -27,26 +29,23 @@ public class RecordService {
     @Transactional
     public RecordResponse create(String uid, RecordCreateRequest req){
 
-        // 1. 유저찾기
         UserEntity userEntity = userRepository.findByUid(uid)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        // 2. 엔티티 조립, 저장
         RecordEntity recordEntity = RecordEntity.builder()
                 .userEntity(userEntity)
-                .gameMeta(req.getGameMeta())
-                .playTimeSeconds(req.getPlayTimeSeconds())
+                .gameMeta(req.gameMeta())
+                .playTimeSeconds(req.playTimeSeconds())
                 .build();
 
         recordRepository.save(recordEntity);
 
-        // 3. 클리어한 유저만 랭킹반영
+        // 클리어한 유저만 랭킹반영
         try {
-            JsonNode metaNode = objectMapper.readTree(req.getGameMeta());
+            JsonNode metaNode = objectMapper.readTree(req.gameMeta());
 
             if (metaNode.has("isCleared") && metaNode.get("isCleared").asBoolean()) {
-
-                rankingService.updatePlayTimeIfBest(userEntity, req.getPlayTimeSeconds());
+                rankingService.updatePlayTimeIfBest(userEntity, req.playTimeSeconds());
             }
         } catch (Exception e) {
             // 클라이언트가 보낸 JSON이 깨졌거나 형식이 안 맞을 경우 예외 처리
@@ -54,7 +53,6 @@ public class RecordService {
         }
 
         return RecordResponse.from(recordEntity);
-
     }
 
     // 전적조회

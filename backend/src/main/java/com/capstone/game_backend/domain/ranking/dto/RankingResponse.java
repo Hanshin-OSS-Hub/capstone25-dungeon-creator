@@ -1,16 +1,12 @@
-package com.capstone.game_backend.domain.ranking;
+package com.capstone.game_backend.domain.ranking.dto;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import com.capstone.game_backend.domain.ranking.RankingEntity;
 
-@Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class RankingResponse {
-
-    private String nickname;
-    private int rank;
-    private int bestPlayTime;  //시간
+public record RankingResponse (
+        String nickname,
+        int rank,
+        int bestPlayTime  //시간
+) {
 
     public static RankingResponse of(RankingEntity rankingEntity, int calculatedRank) {
         return new RankingResponse(

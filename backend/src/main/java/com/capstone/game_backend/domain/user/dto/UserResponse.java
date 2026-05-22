@@ -1,17 +1,16 @@
-package com.capstone.game_backend.domain.user;
+package com.capstone.game_backend.domain.user.dto;
 
+import com.capstone.game_backend.domain.user.UserEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserResponse {
-
-    private Long id;
-    private String uid;
-    private String nickname;
-    private String token;
+public record UserResponse(
+        Long id,
+        String uid,
+        String nickname,
+        String token
+) {
 
     // 1. 토큰이 필요 없는 경우 (회원가입 응답용)
     public static UserResponse from(UserEntity userEntity) {
