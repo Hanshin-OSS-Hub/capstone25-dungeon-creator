@@ -1,4 +1,4 @@
-package com.capstone.game_backend.domain.api;
+package com.capstone.game_backend.api;
 
 import com.capstone.game_backend.domain.record.dto.RecordCreateRequest;
 import com.capstone.game_backend.domain.record.dto.RecordResponse;
