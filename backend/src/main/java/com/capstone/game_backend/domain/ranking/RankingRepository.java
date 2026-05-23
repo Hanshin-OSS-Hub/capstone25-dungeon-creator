@@ -18,7 +18,7 @@ public interface RankingRepository extends JpaRepository<RankingEntity, Long> {
     List<RankingEntity> findTop100ByOrderByBestPlayTimeAscUpdatedAtAsc();
 
     // 특정 유저의 등수 계산
-    @Query("SELECT COUNT(r) FROM Ranking r WHERE r.bestPlayTime < :myPlayTime OR " +
+    @Query("SELECT COUNT(r) FROM RankingEntity r WHERE r.bestPlayTime < :myPlayTime OR " +
             "(r.bestPlayTime = :myPlayTime AND r.updatedAt < :myUpdatedAt)")
     long calculateMyRank(
             @Param("myPlayTime") int myPlayTime,
