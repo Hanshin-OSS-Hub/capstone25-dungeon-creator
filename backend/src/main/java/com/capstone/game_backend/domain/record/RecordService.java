@@ -7,6 +7,7 @@ import com.capstone.game_backend.domain.user.UserEntity;
 import com.capstone.game_backend.domain.user.UserRepository;
 import com.capstone.game_backend.global.error.CustomException;
 import com.capstone.game_backend.global.error.ErrorCode;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -32,35 +33,54 @@ public class RecordService {
         UserEntity user = userRepository.findByUid(uid)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+        boolean isCleared = false; // 기본값은 false
+
+        try {
+            // 1. JSON 문자열을 먼저 읽어서 클리어 여부 확인
+            JsonNode metaNode = objectMapper.readTree(req.gameMeta());
+            if (metaNode.has("isCleared") && metaNode.get("isCleared").asBoolean()) {
+                isCleared = true;
+            }
+        } catch (JsonProcessingException e) {
+            throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
+        }
+
+        // 2. 파싱해서 얻어낸 isCleared 값을 엔티티에 함께 넣어서 생성
         RecordEntity record = RecordEntity.builder()
                 .user(user)
                 .gameMeta(req.gameMeta())
                 .playTimeSeconds(req.playTimeSeconds())
+                .isCleared(isCleared) // DB 컬럼에 저장
                 .build();
 
         recordRepository.save(record);
 
-        // 클리어한 유저만 랭킹반영
-        try {
-            JsonNode metaNode = objectMapper.readTree(req.gameMeta());
-
-            if (metaNode.has("isCleared") && metaNode.get("isCleared").asBoolean()) {
-                rankingService.updatePlayTimeIfBest(user, req.playTimeSeconds());
-            }
-        } catch (Exception e) {
-            // 클라이언트가 보낸 JSON이 깨졌거나 형식이 안 맞을 경우 예외 처리
-            throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
+        // 3. 클리어한 유저만 랭킹 반영 로직 실행
+        if (isCleared) {
+            rankingService.updatePlayTimeIfBest(user, req.playTimeSeconds());
         }
 
         return RecordResponse.from(record);
     }
 
-    // 전적조회
-    public List<RecordResponse> getRecords(String nickname){
+    // 전적조회 1. 최고기록 순
+    public List<RecordResponse> getBestRecords(String nickname){
 
         UserEntity user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        return recordRepository.findByUser_IdOrderByPlayTimeSecondsAsc(user.getId())
+        return recordRepository.findByUser_IdAndIsClearedTrueOrderByPlayTimeSecondsAsc(user.getId())
+                .stream()
+                .map(RecordResponse::from)
+                .toList();
+    }
+
+    // 2. 최근전적 순
+    public List<RecordResponse> getRecentRecords(String nickname){
+        UserEntity user = userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 최신순(CreatedAtDesc)으로 가져오기
+        return recordRepository.findByUser_IdOrderByCreatedAtDesc(user.getId())
                 .stream()
                 .map(RecordResponse::from)
                 .toList();

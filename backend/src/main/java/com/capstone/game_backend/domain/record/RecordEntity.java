@@ -24,12 +24,16 @@ public class RecordEntity extends BaseEntity {
     @Column(nullable = false)
     private int playTimeSeconds;
 
+    @Column(nullable = false)
+    private boolean isCleared;
+
     //생성자
     @Builder
-    public RecordEntity(UserEntity user, String gameMeta, int playTimeSeconds) {
+    public RecordEntity(UserEntity user, String gameMeta, int playTimeSeconds, boolean isCleared) {
         this.user = user;
         this.gameMeta = gameMeta;
         this.playTimeSeconds = playTimeSeconds;
+        this.isCleared = isCleared;
     }
 
 }

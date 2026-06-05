@@ -25,8 +25,16 @@ public class RecordController {
         return recordService.create(uid, req);
     }
 
+    // 최근 플레이한 전적 순서대로 검색 (실패 기록 포함)
+    // ("/recent") 추가
     @GetMapping
-    public List<RecordResponse> list(@RequestParam String nickname){
-        return recordService.getRecords(nickname);
+    public List<RecordResponse> getRecentList(@RequestParam String nickname){
+        return recordService.getRecentRecords(nickname);
+    }
+
+    // 클리어 타임이 빠른 순서대로 검색 (성공 기록만)
+    @GetMapping("/best")
+    public List<RecordResponse> getBestList(@RequestParam String nickname){
+        return recordService.getBestRecords(nickname);
     }
 }

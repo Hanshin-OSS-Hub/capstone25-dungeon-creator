@@ -122,11 +122,11 @@ class RecordServiceTest {
         RecordEntity record2 = RecordEntity.builder().gameMeta("{\"isCleared\":false}").playTimeSeconds(150).build();
 
         given(userRepository.findByNickname(nickname)).willReturn(Optional.of(userEntity));
-        given(recordRepository.findByUser_IdOrderByPlayTimeSecondsAsc(userEntity.getId()))
+        given(recordRepository.findByUser_IdAndIsClearedTrueOrderByPlayTimeSecondsAsc(userEntity.getId()))
                 .willReturn(List.of(record1, record2)); // 2개의 전적이 있다고 설정
 
         // when
-        List<RecordResponse> responses = recordService.getRecords(nickname);
+        List<RecordResponse> responses = recordService.getBestRecords(nickname);
 
         // then
         assertThat(responses).hasSize(2);
@@ -142,7 +142,7 @@ class RecordServiceTest {
         given(userRepository.findByNickname(nickname)).willReturn(Optional.empty()); // 유저 없음 설정
 
         // when & then
-        assertThatThrownBy(() -> recordService.getRecords(nickname))
+        assertThatThrownBy(() -> recordService.getRecentRecords(nickname))
                 .isInstanceOf(CustomException.class)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.USER_NOT_FOUND);
     }
